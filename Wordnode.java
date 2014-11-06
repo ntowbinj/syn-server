@@ -26,35 +26,11 @@ public class Wordnode{
     // separate implementation to avoid repeatedly checking
     // empty HashSet
     public List<String> shortestPath(Wordnode dest, int limit){
-        Set<Wordnode> visited = new HashSet<>();
-        Map<Wordnode, Wordnode> previous = new HashMap<>();
-        LinkedList<Wordnode> q = new LinkedList<Wordnode>();
-        previous.put(this, null);
-        q.add(this);
-        Wordnode curr = null;
-        boolean found = false;
-        while(!q.isEmpty() && !found){
-            curr = q.removeLast();
-            visited.add(curr);
-            if(curr == dest)
-                found = true;
-            else{
-                for(Wordnode n: curr.neighbors){
-                    if(!visited.contains(n)){
-                        q.addFirst(n);
-                        if(!previous.containsKey(n))
-                            previous.put(n, curr);
-                    }
-                }
-            }
-        }
-        if(!found)
-            return null;
-        return traceBack(curr, previous);
+        return shortestPath(dest, limit, new HashSet<Wordnode>());
     }
 
     public List<String> shortestPath(Wordnode dest, int limit, Set<Wordnode> avoids){
-        Set<Wordnode> visited = new HashSet<>();
+        Set<Wordnode> visited = avoids;
         Map<Wordnode, Wordnode> previous = new HashMap<>();
         LinkedList<Wordnode> q = new LinkedList<Wordnode>();
         previous.put(this, null);
@@ -62,14 +38,17 @@ public class Wordnode{
             q.add(this);
         Wordnode curr = null;
         boolean found = false;
-        while(!q.isEmpty() && !found){
+        while(!q.isEmpty()){
             curr = q.removeLast();
             visited.add(curr);
             if(curr == dest)
+            {
                 found = true;
+                break;
+            }
             else{
                 for(Wordnode n: curr.neighbors){
-                    if(!visited.contains(n) && !avoids.contains(n)){
+                    if(!visited.contains(n)){
                         q.addFirst(n);
                         if(!previous.containsKey(n))
                             previous.put(n, curr);
